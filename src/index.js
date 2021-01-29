@@ -1,13 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import Firebase, { FirebaseContext } from './firebase'
+import fbConfig from './constants/firebase/fbConfig'
+import './index.css'
+import App from './App'
+import reportWebVitals from './reportWebVitals'
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <FirebaseContext.Provider value={new Firebase(fbConfig)}>
+        {/* <React.StrictMode> */}
+            <App />
+        {/* </React.StrictMode> */}
+    </FirebaseContext.Provider>,
   document.getElementById('root')
 );
 
