@@ -1,0 +1,27 @@
+.navbar{
+    position: absolute;
+    top: 85%;
+    width: 97vw;
+    height: 500px;
+    background-color: #F8F8F8F8;
+    border-radius: 20px;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+.navbar ul{
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: nowrap;
+    padding: 5%;
+}
+
+.navbar a{
+}
+
+.navbar p{
+    margin: 0;
+    font-family: var(--f-public-sans);
+    font-size: 0.8rem;
+    color: var(--cs-dark-purple);
+}

@@ -2,6 +2,10 @@ import fb from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 
+/**
+ * TODO convert to typescript
+ */
+
 class Firebase {
     /**
      * @constructor
@@ -24,33 +28,41 @@ class Firebase {
     * @param {string} password string, user's password
     * @param {string[]} preferredTopics string[], topics the user prefers to see
     * @param {string[]} unwantedTopics string[], topics the user wantes to avoid
-
+    *
+    * @returns {Promise<{}>} userInfo
     * *pre: Username, email, and password must NOT be null or und. Password needs to be at least 8 characters long 
     * *post: New user will be created, and will be added to the firestore database 
     * 
-    * TODO: Might shrink all params down into a single object
+    * TODO Might shrink all params down into a single object
     **/
-    createAccount(name = null, age, username, email, password, preferredTopics = [], unwantedTopics = []){
-        this.auth.createUserWithEmailAndPassword(email, password)
-          .then(newUser => {
-            newUser.user.updateProfile({ displayName: username });
-            this.updateUserInfo(newUser.user.uid, {name, age, preferredTopics, unwantedTopics});
-          })
-          .catch(error => {
-            console.error(error);
-          });
+    async createAccount(name = null, age, username, email, password, preferredTopics = [], unwantedTopics = []){
+        const newUser = await this.auth.createUserWithEmailAndPassword(email, password)
+        
+        newUser.user.updateProfile({ displayName: username });
+        this.updateUserInfo(newUser.user.uid, {name, age, preferredTopics, unwantedTopics});
+
+        return { uid: newUser.user.uid, name: name, username: username, email: email, age: age, topics: preferredTopics, posts: [] }
+        
     }
 
     /** 
     * @param {string} email user's email
     * @param {string} password user's password
+    * TODO make async
     **/
-    login(email, password){
-        this.auth.signInWithEmailAndPassword(email, password)
-          .then(() => {console.log('yea');})
-          .catch(err => {
-              console.error(err);
-          })
+    async login(email, password){
+        //gets user info from auth
+        const userCreds = await this.auth.signInWithEmailAndPassword(email, password);  
+        let user = userCreds.user;
+
+        //gets additional info from database
+        const userDoc = await this.db.collection('users').doc(user.uid).get();
+        let userData = userDoc.data();
+
+        //gets user post
+        const posts = await this.getPostByUID(user.uid);
+
+        return { uid: user.uid, name: userData.name, username: user.displayName, email: user.email, age: userData.age, topics: userData.preferredTopics, posts: posts }
     }
 
     /**
@@ -101,6 +113,24 @@ class Firebase {
     }
 
     // POSTS //
+    /**
+     * type for post
+     * 
+     * @typedef Post 
+     * @property {string} uid user's id
+     */
+
+     /**
+      * type for comments
+      * 
+      * @typedef Comment
+      * @property {string} id comment id (don't include when posting comment, auto-gen by Firestore)
+      * @property {string} body comment body
+      * @property {number} likes amount of likes on comment
+      * @property {number} post_time time comment was posted (in millis)
+      * @property {string} tag type of account that made the comment (default, doctor, tharapist, etc)
+      * 
+      */
 
     /**
      * @param {Object} postInfo object with all post info
@@ -111,6 +141,8 @@ class Firebase {
      * @param {number} postInfo.timestamp time post was created (in milliseconds)
      * @param {string} postInfo.tag user's acount type (default, doctor, therapist, etc)
      * @param {string[]} postInfo.mood post's mood
+     * 
+     * TODO make async
      */
     createPost(postInfo){
         this.db.collection('posts').add(postInfo)
@@ -119,37 +151,84 @@ class Firebase {
     /**
      * ! WIP !
      * @param {string} uid user's id
-     * @returns {Object} object with all of the post info 
-     *                   ({ uid: string, username: string, ...})
+     * @returns {Promise<Post[]>} a promise to the list of posts
+     *                   
      * TODO List out all of object elements in @return thingy
      * TODO write function
      */
-    getPostByUID(){
+    async getPostByUID(uid){
+        let posts = [];
 
+        const snapshot = await this.db.collection('posts').where('uid', '==', uid).get();
+        snapshot.forEach(doc => {
+            //add doc id to post info
+            let docData = doc.data();
+            let docID = {id: doc.id};
+            let docInfo = {...docData, ...docID};
+            //adds topics to list
+            posts.push(docInfo);
+        })
+
+        return posts;
     }
 
     /**
      * @param {string[]} topics array topics to search for post by (Anxiety, Depression, etc)
-     * @returns {Object[]} object with all of the post info 
-     *                   ({ uid: string, username: string, ...})
+     * @returns {Promise<Post[]>} a promise to the list of posts
      * 
-     * TODO List out all of object elements in @return thingy
-     * TODO write function
+     * TODO List out all of object elements in typedef
+     * TODO Sort list by time
+     * TODO Limit the amount of post recieved
      */
-    getPostByTopics(topics){
-        let topic_list = [];
-        this.db.collection('posts').where('topics', 'array-contains-any', ['Depression', 'Anxiety'])
-          .get()
-          .then(snapshot => {
-              console.log('Snap: ', snapshot);
-              snapshot.forEach(doc => {
-                  console.log('Doc: ', doc.data());
-                  topic_list.unshift(doc.data()); //* may change to .push()
-              });
-              console.log(topic_list);
-              return topic_list;
-          })
-          .catch(err => {console.error(err);})
+    async getPostByTopics(topics){
+        let posts = [];
+
+        const snapshot = await this.db.collection('posts').where('topics', 'array-contains-any', ['Depression', 'Anxiety']).get();
+        snapshot.forEach(doc => {
+            //add doc id to doc info
+            let docData = doc.data();
+            let docID = {id: doc.id};
+            let docInfo = {...docData, ...docID};
+            //adds doc to list
+            posts.push(docInfo);
+        })
+
+        return posts;
+    }
+
+    /**
+     * @param {string} post_id id of post to comment on
+     * @param {Object} comment_info info about comment (refer to Comment typdef)
+     */
+    async commentOnPost(post_id, comment_info){
+        //sets likes of comment to zero
+        comment_info.likes = 0;
+        //adds comment to database
+        this.db.collection('posts').doc(post_id)
+               .collection('comments').add(comment_info);
+    }
+
+    /**
+     * @param {string} post_id id of the comment's post
+     * @returns {Promise<Post[]>} a promise to the list of comments under the specified post
+     * 
+     * TODO Sort list by likes
+     */
+    async getPostComments(post_id){
+        let comments = [];
+        const snapshot = await this.db.collection('posts').doc(post_id)
+                                      .collection('comments').get();
+        console.log(snapshot);
+        snapshot.forEach(doc => {
+            //add doc id to doc info  
+            let docData = doc.data();
+            let docID = {id: doc.id};
+            let docInfo = {...docData, ...docID};
+            //add doc to list
+            comments.push(docInfo);
+        })
+
+        return comments;
     }
 }
 

@@ -1,0 +1,56 @@
+.landing, .signup, .setup_pages{
+    min-height: 100vh;
+    width: 100vw;
+    background-color: var(--cs-light-purple);
+    padding: 18%;
+    text-align: center;
+}
+
+.title{
+    font-family: var(--f-public-sans);
+    background-color: var(--cs-purple);
+    color: white;
+    padding: 12%;
+}
+
+.title h1{
+    margin: 0;
+}
+
+/* Signup */
+
+.signin_heading{
+    font-family: var(--f-public-sans);
+    font-size: 1.5rem;
+    background-color: var(--cs-purple);
+    color: var(--cs-white);
+    padding: 3%;
+}
+
+.setup_pages{
+    padding: 10%;
+}
+
+.setup_pages h2{
+    font-family: var(--f-public-sans);
+    font-size: 2rem;
+    margin: 2% 0%;
+}
+
+.setup_pages p{
+    padding: 0 10%;
+    font-family: var(--f-ubuntu);
+    font-weight: bold;
+}
+
+.setup_btn_back{
+    position: absolute;
+    bottom: 2%;
+    left: 2%;
+}
+
+.setup_btn_next{
+    position: absolute;
+    bottom: 2%;
+    right: 2%;
+}

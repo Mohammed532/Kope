@@ -1,13 +1,30 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root{
+    --cs-dark-purple: #1D1E2C;
+    --cs-purple: #49306b;
+    --cs-light-purple: #7B8CDE;
+    --cs-yellow: #F8EC8B;
+    --cs-white: #F8F8F8;
+    --cs-gray: #C4C4C4;
+    --f-ubuntu: 'Ubuntu', sans-serif;
+    --f-public-sans: 'Public Sans', sans-serif;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+    width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+
+.test1{
+    font-family: var(--f-ubuntu);
+}
+
+.test2{
+    font-family: var(--f-public-sans);
+}
+

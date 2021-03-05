@@ -1,0 +1,32 @@
+.button{
+    background-color: var(--cs-gray);
+    display: inline-block;
+    color: var(--cs-dark-purple);
+    font-family: var(--f-public-sans);
+    margin: 5% 0%;
+    padding: 5% 15%;
+}
+
+.primary{
+    background-color: var(--cs-white);
+}
+
+.secondary{
+    background-color: var(--cs-yellow);
+}
+
+.rounded{
+    border-radius: 5px;
+}
+
+.pill{
+    border-radius: 50px;
+}
+
+.small{
+    padding: 0% 10%;
+}
+
+.fill{
+    width: 100%;
+}

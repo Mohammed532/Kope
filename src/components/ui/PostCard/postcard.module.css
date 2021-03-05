@@ -1,0 +1,21 @@
+.postcard{
+    background-color: #F8F8F8;
+    border-radius: 3px;
+    margin: 5%;
+    padding: 3%;
+}
+
+.post_heading{
+    display: flex;
+}
+
+.post_img{
+    height: 80px;
+    width: 80px;
+    background-color: var(--cs-gray);
+    border-radius: 50%;
+}
+
+.name{
+    padding-left: 3%;
+}

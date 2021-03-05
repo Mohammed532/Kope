@@ -1,0 +1,37 @@
+.input{
+    text-align: center;
+}
+
+.input:focus{
+    border: none !important; 
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.light{
+    background-color: var(--cs-yellow) !important;
+}
+
+.light::placeholder{
+    color: #858383;
+    transition: color 0.3s;
+}
+
+.dark{
+    background-color: var(--cs-gray) !important;
+    transition: color 1.5s;
+}
+
+.dark::placeholder{
+    color: var(--cs-purple);
+    transition: color 0.3s;
+}
+
+::placeholder{
+    text-align: center;
+    font-weight: bold;
+}
+
+.input:focus::placeholder{
+    visibility: hidden;
+}

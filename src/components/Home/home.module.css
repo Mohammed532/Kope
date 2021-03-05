@@ -1,0 +1,19 @@
+.home{
+    min-height: 100vh;
+}
+
+h1 {
+    background-color: var(--cs-purple);
+    margin: 0;
+    padding: 10% 0 5% 7%;
+    font-family: var(--f-public-sans);
+    color: var(--cs-white);
+}
+
+h2 {
+    font-family: var(--f-ubuntu);
+    font-weight: bolder;
+    font-size: 2rem;
+    text-align: center;
+    color: var(--cs-light-purple);
+}
